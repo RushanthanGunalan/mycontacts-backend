@@ -38,3 +38,5 @@ const errorHandler = (req, res, err, next) => {
       break;
   }
 };
+
+module.exports = errorHandler;
