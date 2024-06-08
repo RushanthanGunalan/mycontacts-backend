@@ -54,6 +54,11 @@ const updateContact = asyncHandler(async (req, res) => {
     throw new Error("Contact not Found");
   }
 
+  if (contact.user_id.toString() !== req.user.id) {
+    res.status(403);
+    throw new Error("User Dont have permission to access Other Contacts");
+  }
+
   const updatedContact = await Contact.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -72,7 +77,12 @@ const deleteContact = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Contact not Found");
   }
-  await Contact.findByIdAndDelete(req.params.id);
+
+  if (contact.user_id.toString() !== req.user.id) {
+    res.status(403);
+    throw new Error("User Dont have permission to access Other Contacts");
+  }
+  await Contact.deleteOne({ _id: req.params.id });
   res.status(200).json(contact);
 });
 
