@@ -7,9 +7,9 @@ const {
   updateContact,
   deleteContact,
 } = require("../controllers/contactController");
-const validateToken = require("../middleware/validateTokenHandler");
+// const validateToken = require("../middleware/validateTokenHandler");//Only Temporary
 
-router.use(validateToken);
+// router.use(validateToken);//Only Temporary
 
 //Getting all Data from End Point
 //Adding New Data and posting it to the End point
