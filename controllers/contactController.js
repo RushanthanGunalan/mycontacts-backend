@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Contact = require("../models/contactModel");
+const path = require("path");
+const fs = require("fs");
 
 // @desc Get all contacts
 // @route GET /api/contacts
@@ -22,10 +24,14 @@ const createContact = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory");
   }
 
+  const imagePath = req.file ? req.file.path : undefined;
+  console.log("The Image path is:", imagePath); // Log the image path
+
   const contact = await Contact.create({
     name,
     email,
     phone,
+    image: imagePath,
     // Ensure req.user.id is available
     // user_id: req.user.id, // Uncomment when user auth is in place
   });
@@ -60,9 +66,23 @@ const updateContact = asyncHandler(async (req, res) => {
   //   throw new Error("User does not have permission to update other contacts");
   // }
 
+  const updatedData = {
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+  };
+
+  if (req.file) {
+    // Delete the old image if exists
+    if (contact.image) {
+      fs.unlinkSync(contact.image);
+    }
+    updatedData.image = req.file.path;
+  }
+
   const updatedContact = await Contact.findByIdAndUpdate(
     req.params.id,
-    req.body,
+    updatedData,
     { new: true }
   );
   res.status(200).json(updatedContact);
@@ -83,6 +103,10 @@ const deleteContact = asyncHandler(async (req, res) => {
   //   res.status(403);
   //   throw new Error("User does not have permission to delete other contacts");
   // }
+
+  if (contact.image) {
+    fs.unlinkSync(contact.image);
+  }
 
   await Contact.deleteOne({ _id: req.params.id });
   res.status(200).json(contact);
