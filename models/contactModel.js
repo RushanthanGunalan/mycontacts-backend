@@ -23,6 +23,10 @@ const contactSchema = mongoose.Schema(
       type: String,
       required: false,
     },
+    isFavorite: {
+      type: Boolean,
+      default: false, // Default is not a favorite
+    },
   },
   {
     timestamps: true,

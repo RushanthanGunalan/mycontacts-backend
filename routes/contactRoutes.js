@@ -9,6 +9,8 @@ const {
   getContact,
   updateContact,
   deleteContact,
+  toggleFavorite,
+  getFavoriteContacts,
 } = require("../controllers/contactController");
 // const validateToken = require("../middleware/validateTokenHandler");//Only Temporary
 
@@ -29,6 +31,12 @@ const upload = multer({ storage });
 //Getting all Data from End Point
 //Adding New Data and posting it to the End point
 router.route("/").get(getContacts).post(upload.single("image"), createContact);
+
+// Toggle favorite status for a contact
+router.route("/:id/favorite").put(toggleFavorite);
+
+// Get all favorite contacts
+router.route("/favorites").get(getFavoriteContacts);
 
 //Getting specific Data from the Endpoint based on the ID
 //Editng the exisitng data based on the ID and updating through Endpoint

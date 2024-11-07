@@ -112,10 +112,38 @@ const deleteContact = asyncHandler(async (req, res) => {
   res.status(200).json(contact);
 });
 
+// @desc Toggle favorite status of a contact
+// @route PUT /api/contacts/:id/favorite
+// @access Private
+const toggleFavorite = asyncHandler(async (req, res) => {
+  const contact = await Contact.findById(req.params.id);
+
+  if (!contact) {
+    res.status(404);
+    throw new Error("Contact not found");
+  }
+
+  // Toggle the isFavorite field
+  contact.isFavorite = !contact.isFavorite;
+
+  const updatedContact = await contact.save();
+  res.status(200).json(updatedContact);
+});
+
+// @desc Get all favorite contacts
+// @route GET /api/contacts/favorites
+// @access Private
+const getFavoriteContacts = asyncHandler(async (req, res) => {
+  const favoriteContacts = await Contact.find({ isFavorite: true });
+  res.status(200).json(favoriteContacts);
+});
+
 module.exports = {
   getContacts,
   createContact,
   getContact,
   updateContact,
   deleteContact,
+  toggleFavorite,
+  getFavoriteContacts,
 };
